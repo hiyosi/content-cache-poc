@@ -1,3 +1,7 @@
+upstream app {
+    ip_hash;
+    server localhost:8080;
+}
 server {
         listen 80 default_server;
         listen [::]:80 default_server;
@@ -7,14 +11,21 @@ server {
         index index.html index.htm index.nginx-debian.html;
 
         location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
-            proxy_cache_valid any 1d;
-            access_log off;
-            proxy_pass http://localhost:8080;
+            # try_filesと一緒に使えない？
+            # proxy_cache_valid any 1d;
+            # access_log off;
+
+            root /var/www/static;
+            try_files $uri $uri/ @backend;
+        }
+
+        location @backend {
+                proxy_pass http://app;
         }
 
         proxy_cache one;
         proxy_cache_key $host$uri$is_args$args;
         location / {
-            proxy_pass http://localhost:8080;
+            proxy_pass http://app;
         }
 }
