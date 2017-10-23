@@ -11,6 +11,7 @@ import (
 
 func writeImage(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimPrefix(r.URL.Path, "/icons/")
+	log.Printf("request: %v\n", id)
 	b, err := ioutil.ReadFile("icons/" + id)
 	if err != nil {
 		log.Println(err.Error())

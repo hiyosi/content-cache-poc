@@ -1,0 +1,20 @@
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        root /var/www/html;
+
+        index index.html index.htm index.nginx-debian.html;
+
+        location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+            proxy_cache_valid any 1d;
+            access_log off;
+            proxy_pass http://localhost:8080;
+        }
+
+        proxy_cache one;
+        proxy_cache_key $host$uri$is_args$args;
+        location / {
+            proxy_pass http://localhost:8080;
+        }
+}
